@@ -14,7 +14,7 @@
 
 //======================================================================//
 
-int numprocs;
+
 
 EMPLOYEE * employee_table;
 TRIP * trips_table;
@@ -22,7 +22,7 @@ TRIP * trips_table;
 
 
 //======================================================================//
-void set_processors(int argc, char* argv[]);
+int set_processors(int argc, char* argv[]);
 
 
 //======================================================================//
@@ -30,13 +30,11 @@ void set_processors(int argc, char* argv[]);
 
 int main (int argc, char *argv[]) {
 
-	int i, ret, psize;
-	pthread_attr_t attr;
-	pthread_t * threads;
-	THREAD_ARGS * args;
+	int i, ret, psize, numprocs;
+
 
 	// check arguments and set number of processors
-	set_processors(argc, argv);
+	numprocs = set_processors(argc, argv);
 
 	// set partition size
 	psize = MAX_EMPLOYEES / numprocs;
@@ -47,24 +45,33 @@ int main (int argc, char *argv[]) {
 	if (file_load_trips_table(&trips_table) < 0)
 		return -1;
 
-	// set thread attibutes
-	pthread_attr_init(&attr);
-  pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
+	// partition employee table and sort the partitions
+	split_and_sort_employees(&employee_table, numprocs);
+	merge_sorted_employees(&employee_table, numprocs);
 
-  // allocate space for threads and args
-	threads = (pthread_t*) malloc(sizeof(pthread_t) * numprocs);
-	args = (THREAD_ARGS*) malloc (sizeof(THREAD_ARGS) * numprocs);
+	// partition trips table and sort the partitions
+	split_and_sort_trips(&trips_table, numprocs);
+	merge_sorted_trips(&trips_table, numprocs);
 
-	// start the worker threads
-	for (i = 0; i < numprocs; i++) {
-		// set the thread args
-		args[i].id = i;
-		args[i].start = i * psize;
-		args[i].len = psize;
-		args[i].trips = trips_table;
-		args[i].employees = employee_table;
-		ret = pthread_create(&threads[i], &attr, thread_function, (void*)&args[i]);
-	}
+	// merge-join employees and trips tables
+	merge_join_tables(&employee_table, &trips_table, numprocs);
+
+
+	printf("Finished\n");
+	return 0;
+}
+
+
+
+
+
+
+/**************************************************************************************
+ * 	Barrier to stop threads until all have finished
+ */
+void thread_barrier(int numprocs, pthread_t * threads) {
+
+	int i, ret;
 
 	// wait for worker threads to finish
 	for (i = 0; i < numprocs; i++) {
@@ -73,13 +80,14 @@ int main (int argc, char *argv[]) {
 		#endif
 		ret = pthread_join(threads[i], NULL);
 	}
-
-	printf("Finished\n");
-	return 0;
 }
 
+/**************************************************************************************
+ * 	Set the number of processors
+ */
+int set_processors(int argc, char* argv[]) {
 
-void set_processors(int argc, char* argv[]) {
+	int numprocs;
 
 	if (argc < 2)
 		numprocs = 1;
@@ -90,5 +98,5 @@ void set_processors(int argc, char* argv[]) {
 	  	printf("Numprocs: %d\n", numprocs);
 	#endif
 
-	return;
+	return numprocs;
 }

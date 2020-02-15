@@ -14,7 +14,9 @@ typedef struct {
 
 //======================================================================//
 
-void* thread_function(void* input);
+void* thread_sort_employees(void* input);
+
+void* thread_sort_trips(void* input);
 
 EMPLOYEE * read_employee_table(EMPLOYEE * table, int start, int len);
 

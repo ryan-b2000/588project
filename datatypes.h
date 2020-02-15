@@ -10,20 +10,24 @@
 
 #define SIZE_CITY 30
 #define SIZE_NAME 20
-
+#define SIZE_DESC SIZE_CITY
 
 //======================================================================//
 typedef struct employee_t {
 	int id;
-	char name [20]; 
+	char name [SIZE_NAME];
 } EMPLOYEE;
 
 
 typedef struct trip_t {
 	int id;
-	char dest [30];
+	char dest [SIZE_CITY];
 } TRIP;
 
+typedef struct entry_t {
+	int id;
+	char desc [SIZE_DESC];
+} ENTRY;
 
 
 #endif // DATATYPES

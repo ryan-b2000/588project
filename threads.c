@@ -12,7 +12,7 @@
 /**************************************************************************************
  * 	Main sorting thread
  */
-void* thread_function(void* input) {
+void* thread_sort_employees(void* input) {
 	
 	int i, id, start, len;
 	EMPLOYEE * e_table;
@@ -29,9 +29,6 @@ void* thread_function(void* input) {
 
 	// read the employee table and make a copy of a partition
 	e_table = read_employee_table(e_table, start, len);
-
-	// read the trips table and make a copy of a partition
-	t_table = read_trips_table(t_table, start, len);
 
 	sort_employee(e_table, len, id);
 

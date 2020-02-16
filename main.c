@@ -3,7 +3,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <pthread.h>
+
 #include "fileio.h"
 #include "table.h"
 #include "threads.h"
@@ -16,13 +16,14 @@
 
 int numprocs;
 
-EMPLOYEE * employee_table;
-TRIP * trips_table;
+ENTRY * employee_table;
+ENTRY * trips_table;
+
 
 
 
 //======================================================================//
-void set_processors(int argc, char* argv[]);
+int set_processors(int argc, char* argv[]);
 
 
 //======================================================================//
@@ -31,15 +32,10 @@ void set_processors(int argc, char* argv[]);
 int main (int argc, char *argv[]) {
 
 	int i, ret, psize;
-	pthread_attr_t attr;
-	pthread_t * threads;
-	THREAD_ARGS * args;
+
 
 	// check arguments and set number of processors
-	set_processors(argc, argv);
-
-	// set partition size
-	psize = MAX_EMPLOYEES / numprocs;
+	numprocs = set_processors(argc, argv);
 
 	// load employee and trips tables
 	if (file_load_employees_table(&employee_table) < 0)
@@ -47,39 +43,34 @@ int main (int argc, char *argv[]) {
 	if (file_load_trips_table(&trips_table) < 0)
 		return -1;
 
-	// set thread attibutes
-	pthread_attr_init(&attr);
-  pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
+	// partition employee table, sort the partitions, and consolidate
+	split_and_sort_table(employee_table, TABLE_EMPLOYEES);
+	merge_sorted_partitions(employee_table, TABLE_EMPLOYEES);
+	write_table_to_file(employee_table, "sorted_emps.txt", TABLE_EMPLOYEES);
 
-  // allocate space for threads and args
-	threads = (pthread_t*) malloc(sizeof(pthread_t) * numprocs);
-	args = (THREAD_ARGS*) malloc (sizeof(THREAD_ARGS) * numprocs);
+	// partition trips table, sort the partitions, and consolidate
+	split_and_sort_table(trips_table, TABLE_TRIPS);
+	merge_sorted_partitions(trips_table, TABLE_TRIPS);
+	write_table_to_file(trips_table, "sorted_trips.txt", TABLE_TRIPS);
 
-	// start the worker threads
-	for (i = 0; i < numprocs; i++) {
-		// set the thread args
-		args[i].id = i;
-		args[i].start = i * psize;
-		args[i].len = psize;
-		args[i].trips = trips_table;
-		args[i].employees = employee_table;
-		ret = pthread_create(&threads[i], &attr, thread_function, (void*)&args[i]);
-	}
+	// merge-join employees and trips tables
+	//merge_join_tables(&employee_table, &trips_table);
 
-	// wait for worker threads to finish
-	for (i = 0; i < numprocs; i++) {
-		#if DEBUG
-			printf("Waiting for thread: %d\n", i);
-		#endif
-		ret = pthread_join(threads[i], NULL);
-	}
 
 	printf("Finished\n");
 	return 0;
 }
 
 
-void set_processors(int argc, char* argv[]) {
+
+
+
+/**************************************************************************************
+ * 	Set the number of processors
+ */
+int set_processors(int argc, char* argv[]) {
+
+	int numprocs;
 
 	if (argc < 2)
 		numprocs = 1;
@@ -90,5 +81,5 @@ void set_processors(int argc, char* argv[]) {
 	  	printf("Numprocs: %d\n", numprocs);
 	#endif
 
-	return;
+	return numprocs;
 }

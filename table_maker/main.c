@@ -27,7 +27,7 @@ char city_table [MAX_DESTINATIONS][SIZE_CITY];
 char name_table [MAX_NAMES][SIZE_NAME];
 
 
-//======================================================================//
+//==================z====================================================//
 void set_seed(int s);
 int get_random_id();
 int get_random_destination(char * dest);

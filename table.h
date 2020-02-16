@@ -1,10 +1,22 @@
+#include "datatypes.h"
 
 
+#define TABLE_TRIPS 			0
+#define TABLE_EMPLOYEES 	1
 
-void split_and_sort_employees(EMPLOYEE * table, int numprocs);
+/**************************************************************************************
+ *
+ */
+void split_and_sort_table(ENTRY * table, int tabletype);
 
-void split_and_sort_trips(TRIP * table, int numprocs);
+void merge_sorted_partitions (ENTRY * table, int tabletype);
 
-void merge_join_tables(EMPLOYEE * etable, TRIP * ttable, int numprocs);
+void merge_join_tables(ENTRY ** etable, ENTRY ** ttable);
 
-void display_merged_table();
+void print_table(ENTRY * partition, int tabletype);
+
+void print_partition(PARTITION partition, int id);
+
+int get_employee_number(PARTITION partition);
+
+int add_sorted_entry(PARTITION * partition, ENTRY * table, int * index);

@@ -15,15 +15,16 @@
 //======================================================================//
 
 int numprocs;
-
+int * key_range;
 ENTRY * employee_table;
 ENTRY * trips_table;
-
-
-
+PARTITION * partitions;
+HISTOGRAM ** histogram;
+MERGED_ENTRIES * merged;
 
 //======================================================================//
 int set_processors(int argc, char* argv[]);
+
 
 
 //======================================================================//
@@ -31,8 +32,7 @@ int set_processors(int argc, char* argv[]);
 
 int main (int argc, char *argv[]) {
 
-	int i, ret, psize;
-
+	int i;
 
 	// check arguments and set number of processors
 	numprocs = set_processors(argc, argv);
@@ -43,25 +43,33 @@ int main (int argc, char *argv[]) {
 	if (file_load_trips_table(&trips_table) < 0)
 		return -1;
 
+	// allocate memory for the partition and sub-partition information
+	partitions = (PARTITION*) malloc(sizeof(PARTITION) * numprocs);
+	for (i = 0; i < numprocs; i++) {
+		partitions[i].subpart = (SUBPART*) malloc(sizeof(SUBPART) * numprocs);
+	}
+
+	// allocate memory for the final merged entries table
+	merged = (MERGED_ENTRIES*) malloc(sizeof(MERGED_ENTRIES) * MAX_EMPLOYEES);
+
+	// allocate memory for the key range structure
+	//key_range = (int*) malloc(sizeof(int) * numprocs);
+
+	// assign generic key ranges independent of distribution
+	//assign_key_ranges(key_range);
+
 	// partition employee table, sort the partitions, and consolidate
-	split_and_sort_table(employee_table, TABLE_EMPLOYEES);
-	merge_sorted_partitions(employee_table, TABLE_EMPLOYEES);
-	write_table_to_file(employee_table, "sorted_emps.txt", TABLE_EMPLOYEES);
+	split_and_sort_tables();
 
-	// partition trips table, sort the partitions, and consolidate
-	split_and_sort_table(trips_table, TABLE_TRIPS);
-	merge_sorted_partitions(trips_table, TABLE_TRIPS);
-	write_table_to_file(trips_table, "sorted_trips.txt", TABLE_TRIPS);
+	write_merged_table_to_file("merged.txt");
+	//write_table_to_file(employee_table, "sorted_emps.txt", TABLE_EMPLOYEES);
+	//write_table_to_file(trips_table, "sorted_trips.txt", TABLE_TRIPS);
 
-	// merge-join employees and trips tables
-	//merge_join_tables(&employee_table, &trips_table);
 
 
 	printf("Finished\n");
 	return 0;
 }
-
-
 
 
 

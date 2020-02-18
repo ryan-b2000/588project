@@ -11,6 +11,8 @@ int file_load_trips_table(ENTRY ** table);
 
 void write_table_to_file(ENTRY * table, char * filename, int tabletype);
 
-void write_partition_to_file(PARTITION part, int tabletype, int partID);
+void write_partition_to_file(ENTRY * table, int tabletype, int partID);
+
+void write_merged_table_to_file(char * filename);
 
 #endif //__FILE_IO__

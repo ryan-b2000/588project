@@ -4,7 +4,9 @@
 #include <unistd.h>
 #include <string.h>
 #include <pthread.h>
+#include "table.h"
 #include "threads.h"
+#include "fileio.h"
 #include "datatypes.h"
 
 //======================================================================//
@@ -14,8 +16,18 @@
 
 
 //======================================================================//
-//extern ENTRY ** partitions;
+extern int numprocs;
 extern PARTITION * partitions;
+extern ENTRY * employee_table;
+extern ENTRY * trips_table;
+
+extern pthread_t * threads;
+
+int sync_count = 0;
+pthread_cond_t sync_cv;
+pthread_mutex_t sync_lock;
+
+
 
 /**************************************************************************************
  * 	Main sorting thread
@@ -23,25 +35,73 @@ extern PARTITION * partitions;
 void* thread_sort_partition(void* input) {
 	
 	int i, id, start, len;
-	ENTRY * partition;
 	ENTRY * table;
 
-	// parse the thread args
 	id = ((THREAD_ARGS*)input)->id;
-	start = ((THREAD_ARGS*)input)->start;
-	len = ((THREAD_ARGS*)input)->len;
-	table = ((THREAD_ARGS*)input)->table;
 
-	print_thread_info(*(THREAD_ARGS*)input);
+	// EMPLOYEES
+	//-----------------------------------------------------------------
+	start = id * (MAX_EMPLOYEES / numprocs);
+	len = MAX_EMPLOYEES / numprocs;
+	table = employee_table;
 
-	// read the table and make a copy of a partition
-	partition = get_partition(table, start, len);
+	print_thread_info("Sorting Employees", id, start, len);
 
-	// sort the partition
-	sort_partition(partition, len, id);
+	// sort the table partition assigned to this thread
+	sort_partition((table + start), len, id);
 
-	partitions[id].entry = partition;
+	// DEBUG: write partition to file
+	write_partition_to_file(employee_table, TABLE_EMPLOYEES, id);
 
+	// wait for sorting to be complete
+	thread_barrier(numprocs, threads);
+	if (id == 0)	printf("\n --- Partition sorting complete ---\n\n");
+
+	// analyze the sorted partitions and create sub-partitions based on key ranges
+	init_subparts(id, table, TABLE_EMPLOYEES);
+
+	// DEBUG: print out sorted partition states
+	verify_subparts(id, table, TABLE_EMPLOYEES);
+
+	thread_barrier(numprocs, threads);
+	if (id == 0)	printf("\n --- Performing Merge Join ---\n\n");
+
+	// Copy the members from the assigned partition into the merged join table
+	merge_join(id, table, TABLE_EMPLOYEES);
+
+
+	// TRIPS
+	//-----------------------------------------------------------------
+	start = id * (MAX_TRIPS / numprocs);
+	len = MAX_TRIPS / numprocs;
+	table = trips_table;
+
+	print_thread_info("Sorting Trips", id, start, len);
+
+	// sort the table partition assigned to this thread
+	sort_partition((table + start), len, id);
+
+	// DEBUG: write partition to file
+	write_partition_to_file(trips_table, TABLE_TRIPS, id);
+
+	thread_barrier(numprocs, threads);
+	if (id == 0)	printf("\n --- Partition sorting complete ---\n\n");
+
+	// analyze the sorted partitions and create sub-partitions based on key ranges
+	init_subparts(id, table, TABLE_TRIPS);
+
+	// DEBUG: print out sorted partition states
+	verify_subparts(id, table, TABLE_TRIPS);
+
+	thread_barrier(numprocs, threads);
+	if (id == 0)	printf("\n --- Performing Merge Join ---\n\n");
+
+	// Copy the members from the assigned partition into the merged join table
+	merge_join(id, table, TABLE_TRIPS);
+
+	//thread_barrier(numprocs, threads);
+
+	printf("Thread %d -- finished\n", id);
 	return NULL;
 }
 
@@ -90,7 +150,7 @@ void sort_partition(ENTRY * part, int len, int threadID) {
 
 	bool sorted = false;
 
-#if DEBUG_HIGH
+#if 0
 	printf("Presort:\n");
 	for(i = 0; i < len; i++) {
 		printf("  %d %s\n", entry[i].id, entry[i].desc);
@@ -108,7 +168,7 @@ void sort_partition(ENTRY * part, int len, int threadID) {
 		}
 	}
 
-#if DEBUG_HIGH
+#if 0
 	printf("Endsort:\n");
 		for(i = 0; i < len; i++) {
 			printf("  %d: %d %s\n", threadID, entry[i].id, entry[i].desc);
@@ -141,22 +201,22 @@ void swap_entries(ENTRY * dest, ENTRY * src) {
  */
 void thread_barrier(int numprocs, pthread_t * threads) {
 
-	int i, ret;
-	int * id;
+	int ret;
 
-	// wait for worker threads to finish
-	for (i = 0; i < numprocs; i++) {
-		#if DEBUG_LOW
-			printf("Waiting for thread: %d\n", i);
-		#endif
-		ret = pthread_join(threads[i], NULL);
-	}
+	pthread_mutex_lock(&sync_lock);
+	sync_count++;
+	// all threads reach barrier when it a multiple of numprocs
+	if (sync_count % numprocs == 0)
+		ret = pthread_cond_broadcast(&sync_cv);
+	else
+		ret = pthread_cond_wait(&sync_cv, &sync_lock);
+	pthread_mutex_unlock(&sync_lock);
 }
 
 
 /**************************************************************************************
  * Print out thread info for DEBUG_LEVELging
  */
-void print_thread_info(THREAD_ARGS args) {
-	printf("Thread %d: Start: %d End: %d Len: %d\n", args.id, args.start, args.start + args.len - 1, args.len);
+void print_thread_info(const char * type, int id, int start, int len) {
+	printf("Thread %d: %s Table -- Start= %6d End= %6d Len= %6d\n", id, type, start, (start + len - 1), len);
 }

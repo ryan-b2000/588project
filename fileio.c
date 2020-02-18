@@ -10,13 +10,76 @@
 #include "fileio.h"
 
 
+//======================================================================//
 #define LEN 100
-
 #define EMPLOYEE_FILE "/media/ryan/Shared/school/588/project/588project/employees.txt"
 #define TRIPS_FILE "/media/ryan/Shared/school/588/project/588project/trips.txt"
 
-
 #define DEBUG 0
+
+
+//======================================================================//
+extern int numprocs;
+extern MERGED_ENTRIES * merged;
+
+
+
+
+
+void write_merged_table_to_file(char * filename) {
+
+	int key, c;
+	int count, len;
+	char * str;
+	FILE * file;
+
+	file = fopen(filename, "w");
+	if (file == NULL) {
+		printf("Error writing to file\n");
+		return;
+	}
+
+	for (key = 0; key < MAX_EMPLOYEES; key++) {
+
+		// write the names list from the merged entries
+		count = merged[key].employees.count;
+		if (count == 0)
+			fprintf(file, "%6d NAMES:  NONE", key);
+		else {
+			fprintf(file, "%6d NAMES: ", key);
+			for (c = 0; c < count; c++)
+				fprintf(file, " %s", merged[key].employees.desc[c]);
+		}
+		fprintf(file, "\n");
+
+		// write the cities list from the merged entries
+		count = merged[key].trips.count;
+		if (count == 0)
+			fprintf(file, "       CITIES: NONE");
+		else {
+			fprintf(file, "       CITIES:");
+			for (c = 0; c < count; c++)
+				fprintf(file, " %s", merged[key].trips.desc[c]);
+		}
+		fprintf(file, "\n");
+
+
+	}
+
+
+	fclose(file);
+	return;
+}
+
+
+void write_employee(FILE * file, int key, MERGED_ENTRIES * merged) {
+
+	int count = merged[key].employees.count;
+	int i = 0;
+
+	fprintf(file, "%d: %s", key, merged[key].employees.desc[0]);
+
+}
 
 
 
@@ -57,9 +120,9 @@ void write_table_to_file(ENTRY * table, char * filename, int tabletype) {
 /**************************************************************************************
  *
  */
-void write_partition_to_file(PARTITION part, int tabletype, int partID) {
+void write_partition_to_file(ENTRY * table, int tabletype, int partID) {
 
-	int i, tsize;
+	int i, len, start;
 	FILE * file;
 
 	if (tabletype == TABLE_EMPLOYEES) {
@@ -108,10 +171,17 @@ void write_partition_to_file(PARTITION part, int tabletype, int partID) {
 		return;
 	}
 
-	fprintf(file, "%s %d\n", "Partition", partID);
+	if (tabletype == TABLE_EMPLOYEES) {
+		len = MAX_EMPLOYEES / numprocs;
+	}
+	else {
+		len = MAX_TRIPS / numprocs;
+	}
+	start = partID * len;
 
-	for (i = 0; i < part.len; i++) {
-		fprintf(file, "\n%d %s", part.entry[i].id, part.entry[i].desc);
+	fprintf(file, "%d %s", table[start].id, table[start].desc);
+	for (i = start + 1; i < (start + len); i++) {
+		fprintf(file, "\n%d %s", table[i].id, table[i].desc);
 	}
 
 

@@ -12,8 +12,8 @@
 
 //======================================================================//
 #define LEN 100
-#define EMPLOYEE_FILE "/media/ryan/Shared/school/588/project/588project/employees.txt"
-#define TRIPS_FILE "/media/ryan/Shared/school/588/project/588project/trips.txt"
+#define EMPLOYEE_FILE "/home/rbentz/Downloads/588project/employees.txt"
+#define TRIPS_FILE "/home/rbentz/Downloads/588project/trips.txt"
 
 #define DEBUG 0
 
@@ -196,7 +196,7 @@ void write_partition_to_file(ENTRY * table, int tabletype, int partID) {
 int file_load_employees_table(ENTRY ** table){
 
 	int index = 0;
-	int id;
+	int id, i;
 	char str [LEN];
 	char read [LEN];
 	FILE * file;
@@ -212,8 +212,8 @@ int file_load_employees_table(ENTRY ** table){
 
 	// read the table from the file
 	index = 0;
-	while (!feof(file)) {
-
+	//while (!feof(file)) {
+	for (i = 0; i < MAX_EMPLOYEES; i++) {
 		// read a line
 		fgets(read, LEN, file);
 		// get the items
@@ -223,8 +223,8 @@ int file_load_employees_table(ENTRY ** table){
 		// add the table entry
 		((*table) + index)->id = id;
 		strncpy(((*table) + index)->desc, str, SIZE_NAME);
-		#if DEBUG
-			printf("Read %d: %d %s\n", index+1, ((*table) + index)->id, ((*table) + index)->name);
+		#if 0
+			printf("Read %d: %d %s\n", index+1, ((*table) + index)->id, ((*table) + index)->desc);
 		#endif
 		index++;
 	} 
@@ -271,8 +271,8 @@ int file_load_trips_table(ENTRY ** table){
 		// add the table entry
 		((*table) + index)->id = id;
 		strncpy(((*table) + index)->desc, str, SIZE_CITY);
-		#if DEBUG
-			printf("Read %d: %d %s\n", index+1, ((*table) + index)->id, ((*table) + index)->dest);
+		#if 0
+			printf("Read %d: %d %s\n", index+1, ((*table) + index)->id, ((*table) + index)->desc);
 		#endif
 		index++;
 	} 

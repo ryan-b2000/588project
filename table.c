@@ -43,8 +43,8 @@ void init_subparts(int id, ENTRY * table, int tabletype) {
 	}
 	else {
 		table = trips_table;
-		part_start = id * (MAX_EMPLOYEES / numprocs);
-		part_len = MAX_EMPLOYEES / numprocs;
+		part_start = id * (MAX_TRIPS / numprocs);
+		part_len = MAX_TRIPS / numprocs;
 	}
 
 	// set the master partition params
@@ -59,7 +59,7 @@ void init_subparts(int id, ENTRY * table, int tabletype) {
 	sub_len = 0;
 	// set key to demarcation point of the first sub-partition.
 	// If sub-partition 0 then we want all entries from 0 to max / numprocs
-	key = (part_num + 1) * (MAX_EMPLOYEES / numprocs);
+	key = (part_num + 1) * (MAX_ENTRIES / numprocs);
 
 	// go through the partition and find the demarcation points of the sub-partitions based on key values
 	for (i = 0; i < part_len; i++) {
@@ -80,7 +80,7 @@ void init_subparts(int id, ENTRY * table, int tabletype) {
 
 			// set the next key to look for
 			part_num++;
-			key = (part_num + 1) * (MAX_EMPLOYEES / numprocs);
+			key = (part_num + 1) * (MAX_ENTRIES / numprocs);
 
 			// update the substart position
 			sub_start = i;

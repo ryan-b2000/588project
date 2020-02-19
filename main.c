@@ -9,17 +9,14 @@
 #include "threads.h"
 #include "datatypes.h"
 
-#define DEBUG 1
-
-
 //======================================================================//
 
 int numprocs;
 
-ENTRY * employee_table;
-ENTRY * trips_table;
-
-
+ENTRY * employee_table;		// table of employee names read in from file
+ENTRY * trips_table;			// table of trips read in from file
+PARTITION * partitions;		// structure of partition and sub-partition statistics
+MERGED_ENTRIES * merged;	// final table containing merged entries
 
 
 //======================================================================//
@@ -31,8 +28,7 @@ int set_processors(int argc, char* argv[]);
 
 int main (int argc, char *argv[]) {
 
-	int i, ret, psize;
-
+	int i;
 
 	// check arguments and set number of processors
 	numprocs = set_processors(argc, argv);
@@ -43,25 +39,25 @@ int main (int argc, char *argv[]) {
 	if (file_load_trips_table(&trips_table) < 0)
 		return -1;
 
+	// allocate memory for the partition and sub-partition information
+	partitions = (PARTITION*) malloc(sizeof(PARTITION) * numprocs);
+	for (i = 0; i < numprocs; i++) {
+		partitions[i].subpart = (SUBPART*) malloc(sizeof(SUBPART) * numprocs);
+	}
+
+	// allocate memory for the final merged entries table
+	merged = (MERGED_ENTRIES*) malloc(sizeof(MERGED_ENTRIES) * MAX_EMPLOYEES);
+
 	// partition employee table, sort the partitions, and consolidate
-	split_and_sort_table(employee_table, TABLE_EMPLOYEES);
-	merge_sorted_partitions(employee_table, TABLE_EMPLOYEES);
-	write_table_to_file(employee_table, "sorted_emps.txt", TABLE_EMPLOYEES);
+	split_and_sort_tables();
 
-	// partition trips table, sort the partitions, and consolidate
-	split_and_sort_table(trips_table, TABLE_TRIPS);
-	merge_sorted_partitions(trips_table, TABLE_TRIPS);
-	write_table_to_file(trips_table, "sorted_trips.txt", TABLE_TRIPS);
+	write_merged_table_to_file("merged.txt");
 
-	// merge-join employees and trips tables
-	//merge_join_tables(&employee_table, &trips_table);
-
-
+#if 0
 	printf("Finished\n");
+#endif
 	return 0;
 }
-
-
 
 
 
@@ -77,9 +73,8 @@ int set_processors(int argc, char* argv[]) {
 	else 
 		numprocs = atoi(argv[1]);
 
-	#if DEBUG
-	  	printf("Numprocs: %d\n", numprocs);
-	#endif
-
+#if 0
+	printf("Numprocs: %d\n", numprocs);
+#endif
 	return numprocs;
 }

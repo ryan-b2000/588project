@@ -10,13 +10,76 @@
 #include "fileio.h"
 
 
+//======================================================================//
 #define LEN 100
-
 #define EMPLOYEE_FILE "/media/ryan/Shared/school/588/project/588project/employees.txt"
 #define TRIPS_FILE "/media/ryan/Shared/school/588/project/588project/trips.txt"
 
-
 #define DEBUG 0
+
+
+//======================================================================//
+extern int numprocs;
+extern MERGED_ENTRIES * merged;
+
+
+
+
+
+void write_merged_table_to_file(char * filename) {
+
+	int key, c;
+	int count, len;
+	char * str;
+	FILE * file;
+
+	file = fopen(filename, "w");
+	if (file == NULL) {
+		printf("Error writing to file\n");
+		return;
+	}
+
+	for (key = 0; key < MAX_EMPLOYEES; key++) {
+
+		// write the names list from the merged entries
+		count = merged[key].employees.count;
+		if (count == 0)
+			fprintf(file, "%6d NAMES:  NONE", key);
+		else {
+			fprintf(file, "%6d NAMES: ", key);
+			for (c = 0; c < count; c++)
+				fprintf(file, " %s", merged[key].employees.desc[c]);
+		}
+		fprintf(file, "\n");
+
+		// write the cities list from the merged entries
+		count = merged[key].trips.count;
+		if (count == 0)
+			fprintf(file, "       CITIES: NONE");
+		else {
+			fprintf(file, "       CITIES:");
+			for (c = 0; c < count; c++)
+				fprintf(file, " %s", merged[key].trips.desc[c]);
+		}
+		fprintf(file, "\n");
+
+
+	}
+
+
+	fclose(file);
+	return;
+}
+
+
+void write_employee(FILE * file, int key, MERGED_ENTRIES * merged) {
+
+	int count = merged[key].employees.count;
+	int i = 0;
+
+	fprintf(file, "%d: %s", key, merged[key].employees.desc[0]);
+
+}
 
 
 
@@ -57,9 +120,9 @@ void write_table_to_file(ENTRY * table, char * filename, int tabletype) {
 /**************************************************************************************
  *
  */
-void write_partition_to_file(PARTITION part, int tabletype, int partID) {
+void write_partition_to_file(ENTRY * table, int tabletype, int partID) {
 
-	int i, tsize;
+	int i, len, start;
 	FILE * file;
 
 	if (tabletype == TABLE_EMPLOYEES) {
@@ -108,10 +171,17 @@ void write_partition_to_file(PARTITION part, int tabletype, int partID) {
 		return;
 	}
 
-	fprintf(file, "%s %d\n", "Partition", partID);
+	if (tabletype == TABLE_EMPLOYEES) {
+		len = MAX_EMPLOYEES / numprocs;
+	}
+	else {
+		len = MAX_TRIPS / numprocs;
+	}
+	start = partID * len;
 
-	for (i = 0; i < part.len; i++) {
-		fprintf(file, "\n%d %s", part.entry[i].id, part.entry[i].desc);
+	fprintf(file, "%d %s", table[start].id, table[start].desc);
+	for (i = start + 1; i < (start + len); i++) {
+		fprintf(file, "\n%d %s", table[i].id, table[i].desc);
 	}
 
 
@@ -126,7 +196,7 @@ void write_partition_to_file(PARTITION part, int tabletype, int partID) {
 int file_load_employees_table(ENTRY ** table){
 
 	int index = 0;
-	int id;
+	int id, i;
 	char str [LEN];
 	char read [LEN];
 	FILE * file;
@@ -142,8 +212,8 @@ int file_load_employees_table(ENTRY ** table){
 
 	// read the table from the file
 	index = 0;
-	while (!feof(file)) {
-
+	//while (!feof(file)) {
+	for (i = 0; i < MAX_EMPLOYEES; i++) {
 		// read a line
 		fgets(read, LEN, file);
 		// get the items
@@ -153,14 +223,14 @@ int file_load_employees_table(ENTRY ** table){
 		// add the table entry
 		((*table) + index)->id = id;
 		strncpy(((*table) + index)->desc, str, SIZE_NAME);
-		#if DEBUG
-			printf("Read %d: %d %s\n", index+1, ((*table) + index)->id, ((*table) + index)->name);
+		#if 0
+			printf("Read %d: %d %s\n", index+1, ((*table) + index)->id, ((*table) + index)->desc);
 		#endif
 		index++;
 	} 
 
 	fclose(file);
-	printf("Finished loading employee table\n");
+	//printf("Finished loading employee table\n");
 	return 0;
 }
 
@@ -201,14 +271,14 @@ int file_load_trips_table(ENTRY ** table){
 		// add the table entry
 		((*table) + index)->id = id;
 		strncpy(((*table) + index)->desc, str, SIZE_CITY);
-		#if DEBUG
-			printf("Read %d: %d %s\n", index+1, ((*table) + index)->id, ((*table) + index)->dest);
+		#if 0
+			printf("Read %d: %d %s\n", index+1, ((*table) + index)->id, ((*table) + index)->desc);
 		#endif
 		index++;
 	} 
 
 	fclose(file);
-	printf("Finished loading trips table\n");
+	//printf("Finished loading trips table\n");
 	return 0;
 }
 

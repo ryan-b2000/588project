@@ -4,19 +4,27 @@
 #define TABLE_TRIPS 			0
 #define TABLE_EMPLOYEES 	1
 
-/**************************************************************************************
- *
- */
-void split_and_sort_table(ENTRY * table, int tabletype);
+//======================================================================//
 
-void merge_sorted_partitions (ENTRY * table, int tabletype);
+void split_and_sort_tables();
 
-void merge_join_tables(ENTRY ** etable, ENTRY ** ttable);
+
+void init_subparts(int id, ENTRY * table, int tabletype);
+
+
+void verify_subparts(int id, ENTRY * table, int tabletype);
+
+
+void merge_entries(int key, int id, MERGED_ENTRIES * entry, int type);
+
+
+void merge_join(int id, ENTRY * table, int tabletype);
+
 
 void print_table(ENTRY * partition, int tabletype);
 
-void print_partition(PARTITION partition, int id);
 
-int get_employee_number(PARTITION partition);
+int count_key_matches(int id, int key, ENTRY * table);
 
-int add_sorted_entry(PARTITION * partition, ENTRY * table, int * index);
+
+int add_sorted_entries(PARTITION * partition, ENTRY * table, int * index);

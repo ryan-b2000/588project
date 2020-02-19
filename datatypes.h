@@ -8,6 +8,8 @@
 #define MAX_DESTINATIONS 386
 #define MAX_NAMES 5000
 
+#define MAX_ENTRIES MAX_EMPLOYEES
+
 #define SIZE_CITY 30
 #define SIZE_NAME 20
 #define SIZE_DESC SIZE_CITY
@@ -15,31 +17,50 @@
 
 
 //======================================================================//
-/*
-typedef struct employee_t {
-	int id;
-	char name [SIZE_NAME];
-} EMPLOYEE;
-
-
-typedef struct trip_t {
-	int id;
-	char dest [SIZE_CITY];
-} TRIP;
-*/
 
 typedef struct entry_t {
 	int id;
 	char desc [SIZE_DESC];
 } ENTRY;
 
+typedef struct thread_args_t {
+	int id;										// the thread ID
+} THREAD_ARGS;
+
+typedef struct key_range_t {
+	int high;
+	int low;
+} KEY_RANGE;
+
+typedef struct subpart_t {
+	ENTRY * start_ptr;			// starting index of sub-partition
+	int start;							// starting address of the sub-partition (relative to partition)
+	int len;								// length of sub-partition
+} SUBPART;
 
 typedef struct part_t {
-	int len;			// size of partition
-	int index;		// local index when iterating through the partition
-	ENTRY * entry;	// pointer to start of partition array
+	//ENTRY * start_ptr;
+	int start;							// starting index of the partition (relative to the entire table)
+	int len;								// master size of partition
+	SUBPART * subpart;			// array for sub-partition information
 } PARTITION;
 
 
+typedef struct m_entry_t {
+	int count;
+	char ** desc;
+} M_ENTRY;
+
+typedef struct merged_t {
+	M_ENTRY trips;
+	M_ENTRY employees;
+} MERGED_ENTRIES;
+
+
+typedef struct histogram_t {
+	int count;	// number of keys the fall into this bucket
+	int high;		// high value of the range (inclusive)
+	int low;		// low value of the range (inclusive)
+} HISTOGRAM;
 
 #endif // DATATYPES

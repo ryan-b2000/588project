@@ -49,7 +49,6 @@ void init_subparts(int id, ENTRY * table, int tabletype) {
 
 	// set the master partition params
 	part = &partitions[id];											// assign to the partition we are interested in
-	//part->start_ptr = (table + part_start);			// set the pointer to the first item in the partition
 	part->start = part_start;										// set the master starting index of the partition
 	part->len = part_len;												// set the overall size of the partition
 
@@ -57,6 +56,7 @@ void init_subparts(int id, ENTRY * table, int tabletype) {
 	part_num = 0;
 	sub_start = 0;
 	sub_len = 0;
+
 	// set key to demarcation point of the first sub-partition.
 	// If sub-partition 0 then we want all entries from 0 to max / numprocs
 	key = (part_num + 1) * (MAX_ENTRIES / numprocs);
@@ -69,18 +69,16 @@ void init_subparts(int id, ENTRY * table, int tabletype) {
 
 		// if the test value exceeds the key value then we have reached the demarcation point
 		test = (table + part_start + i)->id;
-		//test = (part->start_ptr + i)->id;
 
 		if (test >= key) {
 
 			// set the sub partition parameters
-			//part->subpart[part_num].start_ptr = part->start_ptr + sub_start;
 			part->subpart[part_num].len = sub_len;
 			part->subpart[part_num].start = sub_start;
-
-			//printf("Set Partition %d Subpart %d -- Substart ID= %4d, Subptr= %p\n", id, part_num, sub_start, &part->subpart[part_num].start_ptr);
-			//if (id == 0)	printf("--- ID= %2d, SubStart= %4d = %d %s\n", id, sub_start, part->subpart[part_num].start_ptr[0].id, part->subpart[part_num].start_ptr[0].desc);
-
+#if 0
+			printf("Set Partition %d Subpart %d -- Substart ID= %4d, Subptr= %p\n", id, part_num, sub_start, &part->subpart[part_num].start_ptr);
+			if (id == 0)	printf("--- ID= %2d, SubStart= %4d = %d %s\n", id, sub_start, part->subpart[part_num].start_ptr[0].id, part->subpart[part_num].start_ptr[0].desc);
+#endif
 			// set the next key to look for
 			part_num++;
 			key = (part_num + 1) * (MAX_ENTRIES / numprocs);
@@ -94,10 +92,11 @@ void init_subparts(int id, ENTRY * table, int tabletype) {
 
 	// get the statistics for the last sub-partition
 	sub_len = part_len - sub_start;
-	//part->subpart[part_num].start_ptr = part->start_ptr + sub_start;
 	part->subpart[part_num].len = sub_len;
 	part->subpart[part_num].start = sub_start;
+#if 0
 	//printf("Set Partition %d Subpart %d -- Substart ID= %4d\n", id, part_num, sub_start);
+#endif
 }
 
 
@@ -111,7 +110,7 @@ void verify_subparts(int id, ENTRY * table, int tabletype) {
 	SUBPART * subpart;
 	int index;
 
-#if 0
+
 	pthread_mutex_lock(&lock_verify_parts);
 
 	for (i = 0; i < numprocs; i++) {
@@ -126,7 +125,7 @@ void verify_subparts(int id, ENTRY * table, int tabletype) {
 	printf("Verify Subparts -- Part %2d: Partlen %5d, Total Sublen= %5d\n", id, part->len, total);
 
 	pthread_mutex_unlock(&lock_verify_parts);
-#endif
+
 }
 
 
@@ -138,10 +137,6 @@ void split_and_sort_tables() {
 	int i, psize, ret;
 	pthread_attr_t attr;
 	THREAD_ARGS * args;
-
-#if 0
-	printf("\n--  Split and sort table partitions...\n");
-#endif
 
 	// set thread attibutes
 	pthread_attr_init(&attr);
@@ -164,7 +159,6 @@ void split_and_sort_tables() {
 	}
 
 	// reclaim memory
-	free(threads);
 	free(args);
 }
 
@@ -203,7 +197,6 @@ void merge_join(int id, ENTRY * table, int tabletype) {
 
 				// copy the input entries to the sorted table entry
 				merged[key].employees.count = count;
-				//merge_employee_entries(key, id);
 				merge_entries(key, id, &merged[key], TABLE_EMPLOYEES);
 			}
 			else {
@@ -235,7 +228,6 @@ void merge_join(int id, ENTRY * table, int tabletype) {
 
 				// copy the input entries to the sorted table entry
 				merged[key].trips.count = count;
-				//merge_trip_entries(key, id);
 				merge_entries(key, id, &merged[key], TABLE_TRIPS);
 			}
 			else {

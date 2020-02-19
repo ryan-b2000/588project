@@ -39982,7 +39982,7 @@
        CITIES: Oakland Sebastian Fort Wayne
  19991 NAMES:  Colette Craw
        CITIES: San Buenaventura Bloomington Saginaw Aurora Merced
- 19992 NAMES:  Berman Allisan
+ 19992 NAMES:  Berman
        CITIES: Raleigh
  19993 NAMES:  Benyamin Andie
        CITIES: Brownsville Johnson City Gilbert Medford Augusta Norfolk Salinas
@@ -39991,10 +39991,10 @@
  19995 NAMES:  Cilo Annadiana
        CITIES: Tyler Detroit Providence Memphis Jacksonville Moreno Valley
  19996 NAMES:  NONE
-       CITIES: Myrtle Beach Mobile Bakersfield Fort Smith
+       CITIES: Myrtle Beach Mobile
  19997 NAMES:  Christian Alcine
-       CITIES: Tulsa Warren Waterbury Seattle Memphis
+       CITIES: Tulsa Warren Waterbury Seattle
  19998 NAMES:  Davison
-       CITIES: Spartanburg Eugene Tacoma
+       CITIES: Spartanburg Eugene
  19999 NAMES:  NONE
-       CITIES: Kansas City Harlingen Garden Grove Olympia New London Monterey Atlantic City
+       CITIES: NONE

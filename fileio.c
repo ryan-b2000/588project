@@ -12,8 +12,8 @@
 
 //======================================================================//
 #define LEN 100
-#define EMPLOYEE_FILE "/home/rbentz/Downloads/588project/employees.txt"
-#define TRIPS_FILE "/home/rbentz/Downloads/588project/trips.txt"
+#define EMPLOYEE_FILE "/media/ryan/Shared/school/588/project/588project/employees.txt"
+#define TRIPS_FILE "/media/ryan/Shared/school/588/project/588project/trips.txt"
 
 #define DEBUG 0
 
@@ -230,7 +230,7 @@ int file_load_employees_table(ENTRY ** table){
 	} 
 
 	fclose(file);
-	printf("Finished loading employee table\n");
+	//printf("Finished loading employee table\n");
 	return 0;
 }
 
@@ -278,7 +278,7 @@ int file_load_trips_table(ENTRY ** table){
 	} 
 
 	fclose(file);
-	printf("Finished loading trips table\n");
+	//printf("Finished loading trips table\n");
 	return 0;
 }
 

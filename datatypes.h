@@ -15,6 +15,7 @@
 #define SIZE_DESC SIZE_CITY
 
 
+
 //======================================================================//
 
 typedef struct entry_t {
@@ -33,16 +34,15 @@ typedef struct key_range_t {
 
 typedef struct subpart_t {
 	ENTRY * start_ptr;			// starting index of sub-partition
-	int start;
-	int len;				// length of sub-partition
-	int index;			// keeps track of copying-merge process
+	int start;							// starting address of the sub-partition (relative to partition)
+	int len;								// length of sub-partition
 } SUBPART;
 
 typedef struct part_t {
-	ENTRY * start_ptr;
-	int start;
-	int len;							// master size of partition
-	SUBPART * subpart;		// array for sub-partition information
+	//ENTRY * start_ptr;
+	int start;							// starting index of the partition (relative to the entire table)
+	int len;								// master size of partition
+	SUBPART * subpart;			// array for sub-partition information
 } PARTITION;
 
 

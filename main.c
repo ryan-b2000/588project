@@ -9,22 +9,18 @@
 #include "threads.h"
 #include "datatypes.h"
 
-#define DEBUG 1
-
-
 //======================================================================//
 
 int numprocs;
-int * key_range;
-ENTRY * employee_table;
-ENTRY * trips_table;
-PARTITION * partitions;
-HISTOGRAM ** histogram;
-MERGED_ENTRIES * merged;
+
+ENTRY * employee_table;		// table of employee names read in from file
+ENTRY * trips_table;			// table of trips read in from file
+PARTITION * partitions;		// structure of partition and sub-partition statistics
+MERGED_ENTRIES * merged;	// final table containing merged entries
+
 
 //======================================================================//
 int set_processors(int argc, char* argv[]);
-
 
 
 //======================================================================//
@@ -52,22 +48,14 @@ int main (int argc, char *argv[]) {
 	// allocate memory for the final merged entries table
 	merged = (MERGED_ENTRIES*) malloc(sizeof(MERGED_ENTRIES) * MAX_EMPLOYEES);
 
-	// allocate memory for the key range structure
-	//key_range = (int*) malloc(sizeof(int) * numprocs);
-
-	// assign generic key ranges independent of distribution
-	//assign_key_ranges(key_range);
-
 	// partition employee table, sort the partitions, and consolidate
 	split_and_sort_tables();
 
 	write_merged_table_to_file("merged.txt");
-	//write_table_to_file(employee_table, "sorted_emps.txt", TABLE_EMPLOYEES);
-	//write_table_to_file(trips_table, "sorted_trips.txt", TABLE_TRIPS);
 
-
-
+#if 0
 	printf("Finished\n");
+#endif
 	return 0;
 }
 
@@ -85,9 +73,8 @@ int set_processors(int argc, char* argv[]) {
 	else 
 		numprocs = atoi(argv[1]);
 
-	#if DEBUG
-	  	printf("Numprocs: %d\n", numprocs);
-	#endif
-
+#if 0
+	printf("Numprocs: %d\n", numprocs);
+#endif
 	return numprocs;
 }

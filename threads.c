@@ -17,11 +17,10 @@
 
 //======================================================================//
 extern int numprocs;
-extern PARTITION * partitions;
 extern ENTRY * employee_table;
 extern ENTRY * trips_table;
 
-extern pthread_t * threads;
+pthread_t * threads;
 
 int sync_count = 0;
 pthread_cond_t sync_cv;
@@ -32,7 +31,7 @@ pthread_mutex_t sync_lock;
 /**************************************************************************************
  * 	Main sorting thread
  */
-void* thread_sort_partition(void* input) {
+void* thread_worker(void* input) {
 	
 	int i, id, start, len;
 	ENTRY * table;
@@ -42,10 +41,12 @@ void* thread_sort_partition(void* input) {
 	// EMPLOYEES
 	//-----------------------------------------------------------------
 	start = id * (MAX_EMPLOYEES / numprocs);
-	len = MAX_EMPLOYEES / numprocs;
+	len = set_partition_len(id, numprocs, MAX_EMPLOYEES);
 	table = employee_table;
 
+#if 0
 	print_thread_info("Sorting Employees", id, start, len);
+#endif
 
 	// sort the table partition assigned to this thread
 	sort_partition((table + start), len, id);
@@ -55,7 +56,7 @@ void* thread_sort_partition(void* input) {
 
 	// wait for sorting to be complete
 	thread_barrier(numprocs, threads);
-	if (id == 0)	printf("\n --- Partition sorting complete ---\n\n");
+	//if (id == 0)	printf("\n --- Partition sorting complete ---\n\n");
 
 	// analyze the sorted partitions and create sub-partitions based on key ranges
 	init_subparts(id, table, TABLE_EMPLOYEES);
@@ -64,7 +65,7 @@ void* thread_sort_partition(void* input) {
 	verify_subparts(id, table, TABLE_EMPLOYEES);
 
 	thread_barrier(numprocs, threads);
-	if (id == 0)	printf("\n --- Performing Merge Join ---\n\n");
+	//if (id == 0)	printf("\n --- Performing Merge Join ---\n\n");
 
 	// Copy the members from the assigned partition into the merged join table
 	merge_join(id, table, TABLE_EMPLOYEES);
@@ -73,10 +74,12 @@ void* thread_sort_partition(void* input) {
 	// TRIPS
 	//-----------------------------------------------------------------
 	start = id * (MAX_TRIPS / numprocs);
-	len = MAX_TRIPS / numprocs;
+	len = set_partition_len(id, numprocs, MAX_TRIPS);
 	table = trips_table;
 
+#if 0
 	print_thread_info("Sorting Trips", id, start, len);
+#endif
 
 	// sort the table partition assigned to this thread
 	sort_partition((table + start), len, id);
@@ -85,7 +88,7 @@ void* thread_sort_partition(void* input) {
 	write_partition_to_file(trips_table, TABLE_TRIPS, id);
 
 	thread_barrier(numprocs, threads);
-	if (id == 0)	printf("\n --- Partition sorting complete ---\n\n");
+	//if (id == 0)	printf("\n --- Partition sorting complete ---\n\n");
 
 	// analyze the sorted partitions and create sub-partitions based on key ranges
 	init_subparts(id, table, TABLE_TRIPS);
@@ -94,17 +97,25 @@ void* thread_sort_partition(void* input) {
 	verify_subparts(id, table, TABLE_TRIPS);
 
 	thread_barrier(numprocs, threads);
-	if (id == 0)	printf("\n --- Performing Merge Join ---\n\n");
+	//if (id == 0)	printf("\n --- Performing Merge Join ---\n\n");
 
 	// Copy the members from the assigned partition into the merged join table
 	merge_join(id, table, TABLE_TRIPS);
 
 	//thread_barrier(numprocs, threads);
-
+#if 0
 	printf("Thread %d -- finished\n", id);
+#endif
 	return NULL;
 }
 
+
+int set_partition_len(int id, int numprocs, int max) {
+	if (id == numprocs - 1)
+		return  max - ((max / numprocs) * id);
+	else
+		return (max / numprocs);
+}
 
 
 /*************************************************************************************
@@ -206,8 +217,9 @@ void thread_barrier(int numprocs, pthread_t * threads) {
 	pthread_mutex_lock(&sync_lock);
 	sync_count++;
 	// all threads reach barrier when it a multiple of numprocs
-	if (sync_count % numprocs == 0)
+	if (sync_count % numprocs == 0) {
 		ret = pthread_cond_broadcast(&sync_cv);
+	}
 	else
 		ret = pthread_cond_wait(&sync_cv, &sync_lock);
 	pthread_mutex_unlock(&sync_lock);

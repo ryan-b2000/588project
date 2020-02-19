@@ -10,9 +10,6 @@
 #include "datatypes.h"
 
 //======================================================================//
-// 1 = TURN ON, 0 = TURN OFF
-#define DEBUG_LOW 1
-#define DEBUG_HIGH 0
 
 
 //======================================================================//
@@ -44,28 +41,28 @@ void* thread_worker(void* input) {
 	len = set_partition_len(id, numprocs, MAX_EMPLOYEES);
 	table = employee_table;
 
-#if 0
+
 	print_thread_info("Sorting Employees", id, start, len);
-#endif
+
 
 	// sort the table partition assigned to this thread
 	sort_partition((table + start), len, id);
 
 	// DEBUG: write partition to file
-	write_partition_to_file(employee_table, TABLE_EMPLOYEES, id);
+	//write_partition_to_file(employee_table, TABLE_EMPLOYEES, id);
 
 	// wait for sorting to be complete
 	thread_barrier(numprocs, threads);
-	//if (id == 0)	printf("\n --- Partition sorting complete ---\n\n");
+	if (id == 0)	printf("\n --- Partition sorting complete ---\n\n");
 
 	// analyze the sorted partitions and create sub-partitions based on key ranges
 	init_subparts(id, table, TABLE_EMPLOYEES);
 
 	// DEBUG: print out sorted partition states
-	verify_subparts(id, table, TABLE_EMPLOYEES);
+	//verify_subparts(id, table, TABLE_EMPLOYEES);
 
 	thread_barrier(numprocs, threads);
-	//if (id == 0)	printf("\n --- Performing Merge Join ---\n\n");
+	if (id == 0)	printf("\n --- Performing Merge Join ---\n\n");
 
 	// Copy the members from the assigned partition into the merged join table
 	merge_join(id, table, TABLE_EMPLOYEES);
@@ -77,35 +74,39 @@ void* thread_worker(void* input) {
 	len = set_partition_len(id, numprocs, MAX_TRIPS);
 	table = trips_table;
 
-#if 0
+
 	print_thread_info("Sorting Trips", id, start, len);
-#endif
+
 
 	// sort the table partition assigned to this thread
 	sort_partition((table + start), len, id);
 
+#if 0
 	// DEBUG: write partition to file
 	write_partition_to_file(trips_table, TABLE_TRIPS, id);
+#endif
 
 	thread_barrier(numprocs, threads);
-	//if (id == 0)	printf("\n --- Partition sorting complete ---\n\n");
+	if (id == 0)	printf("\n --- Partition sorting complete ---\n\n");
 
 	// analyze the sorted partitions and create sub-partitions based on key ranges
 	init_subparts(id, table, TABLE_TRIPS);
 
+#if 0
 	// DEBUG: print out sorted partition states
-	verify_subparts(id, table, TABLE_TRIPS);
+	//verify_subparts(id, table, TABLE_TRIPS);
+#endif
 
 	thread_barrier(numprocs, threads);
-	//if (id == 0)	printf("\n --- Performing Merge Join ---\n\n");
+	if (id == 0)	printf("\n --- Performing Merge Join ---\n\n");
 
 	// Copy the members from the assigned partition into the merged join table
 	merge_join(id, table, TABLE_TRIPS);
 
 	//thread_barrier(numprocs, threads);
-#if 0
+
 	printf("Thread %d -- finished\n", id);
-#endif
+
 	return NULL;
 }
 

@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <time.h>
 
 #include "fileio.h"
 #include "table.h"
@@ -21,6 +22,7 @@ MERGED_ENTRIES * merged;	// final table containing merged entries
 
 //======================================================================//
 int set_processors(int argc, char* argv[]);
+void write_time_to_file(unsigned long long int nanos, unsigned long long int secs);
 
 
 //======================================================================//
@@ -28,7 +30,11 @@ int set_processors(int argc, char* argv[]);
 
 int main (int argc, char *argv[]) {
 
-	int i;
+	int i, ret;
+	struct timespec   StartTime;
+	struct timespec   EndTime;
+
+	ret = clock_gettime(CLOCK_REALTIME, &StartTime);
 
 	// check arguments and set number of processors
 	numprocs = set_processors(argc, argv);
@@ -51,14 +57,40 @@ int main (int argc, char *argv[]) {
 	// partition employee table, sort the partitions, and consolidate
 	split_and_sort_tables();
 
+	ret = clock_gettime(CLOCK_REALTIME, &EndTime);
+	unsigned long long int nanos = ((EndTime.tv_sec - StartTime.tv_sec) * 1000000000) + EndTime.tv_nsec - StartTime.tv_nsec;
+	unsigned long long int secs = (EndTime.tv_sec - StartTime.tv_sec) + (EndTime.tv_nsec - StartTime.tv_nsec) / 1000000000;
+
+	printf("Time = %lld nanoseconds (%.8f sec)\n", nanos , (double)((double)nanos / 1000000000));
+
 	write_merged_table_to_file("merged.txt");
 
-#if 0
-	printf("Finished\n");
-#endif
+	write_time_to_file(nanos, secs);
+
+	free (partitions);
+	free (merged);
+	printf("Finished Run %d\n", numprocs);
+
 	return 0;
 }
 
+
+/*************************************************************************************
+ *
+ */
+void write_time_to_file(unsigned long long int nanos, unsigned long long int secs) {
+
+	FILE * file;
+
+	file = fopen("times.txt", "a");
+	if (file == NULL) {
+		printf("Error opening file.\n");
+	}
+
+	fprintf(file, "%d \t %.8f \t %lld\n", numprocs, (double)((double)nanos / 1000000000), nanos);
+
+	fclose(file);
+}
 
 
 /**************************************************************************************
@@ -73,8 +105,7 @@ int set_processors(int argc, char* argv[]) {
 	else 
 		numprocs = atoi(argv[1]);
 
-#if 0
 	printf("Numprocs: %d\n", numprocs);
-#endif
+
 	return numprocs;
 }

@@ -12,6 +12,10 @@
 
 //======================================================================//
 #define LEN 100
+
+//#define EMPLOYEE_FILE "/u/ryan27/588/employees.txt"
+//#define TRIPS_FILE "/u/ryan27/588/trips.txt"
+
 #define EMPLOYEE_FILE "/media/ryan/Shared/school/588/project/588project/employees.txt"
 #define TRIPS_FILE "/media/ryan/Shared/school/588/project/588project/trips.txt"
 
@@ -24,8 +28,9 @@ extern MERGED_ENTRIES * merged;
 
 
 
-
-
+/**************************************************************************************
+ *
+ */
 void write_merged_table_to_file(char * filename) {
 
 	int key, c;
@@ -48,7 +53,7 @@ void write_merged_table_to_file(char * filename) {
 		else {
 			fprintf(file, "%6d NAMES: ", key);
 			for (c = 0; c < count; c++)
-				fprintf(file, " %s", merged[key].employees.desc[c]);
+				fprintf(file, " %s,", merged[key].employees.desc[c]);
 		}
 		fprintf(file, "\n");
 
@@ -59,7 +64,7 @@ void write_merged_table_to_file(char * filename) {
 		else {
 			fprintf(file, "       CITIES:");
 			for (c = 0; c < count; c++)
-				fprintf(file, " %s", merged[key].trips.desc[c]);
+				fprintf(file, " %s,", merged[key].trips.desc[c]);
 		}
 		fprintf(file, "\n");
 
@@ -72,6 +77,9 @@ void write_merged_table_to_file(char * filename) {
 }
 
 
+/**************************************************************************************
+ *
+ */
 void write_employee(FILE * file, int key, MERGED_ENTRIES * merged) {
 
 	int count = merged[key].employees.count;
@@ -80,8 +88,6 @@ void write_employee(FILE * file, int key, MERGED_ENTRIES * merged) {
 	fprintf(file, "%d: %s", key, merged[key].employees.desc[0]);
 
 }
-
-
 
 
 /**************************************************************************************
@@ -230,7 +236,7 @@ int file_load_employees_table(ENTRY ** table){
 	} 
 
 	fclose(file);
-	//printf("Finished loading employee table\n");
+	printf("Finished loading employee table\n");
 	return 0;
 }
 
@@ -278,7 +284,7 @@ int file_load_trips_table(ENTRY ** table){
 	} 
 
 	fclose(file);
-	//printf("Finished loading trips table\n");
+	printf("Finished loading trips table\n");
 	return 0;
 }
 

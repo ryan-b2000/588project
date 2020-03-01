@@ -1,3 +1,8 @@
+/*		Ryan Bentz, Ignacio Roberto Genovese, Rezwana Mahbub
+ * 		ECE 588 Final Project
+ * 		2020/03/05
+ */
+
 #ifndef __DATATYPES__
 #define __DATATYPES__
 
@@ -27,11 +32,6 @@ typedef struct thread_args_t {
 	int id;										// the thread ID
 } THREAD_ARGS;
 
-typedef struct key_range_t {
-	int high;
-	int low;
-} KEY_RANGE;
-
 typedef struct subpart_t {
 	ENTRY * start_ptr;			// starting index of sub-partition
 	int start;							// starting address of the sub-partition (relative to partition)
@@ -47,8 +47,8 @@ typedef struct part_t {
 
 
 typedef struct m_entry_t {
-	int count;
-	char ** desc;
+	int count;							// number of entries of this type
+	char ** desc;						// array for each entry
 } M_ENTRY;
 
 typedef struct merged_t {

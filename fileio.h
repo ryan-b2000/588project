@@ -1,3 +1,9 @@
+/*		Ryan Bentz, Ignacio Roberto Genovese, Rezwana Mahbub
+ * 		ECE 588 Final Project
+ * 		2020/03/05
+ */
+
+
 #ifndef __FILE_IO__
 #define __FILE_IO__
 

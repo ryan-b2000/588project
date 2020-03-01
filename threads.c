@@ -1,3 +1,8 @@
+/*		Ryan Bentz, Ignacio Roberto Genovese, Rezwana Mahbub
+ * 		ECE 588 Final Project
+ * 		2020/03/05
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>

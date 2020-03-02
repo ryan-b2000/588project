@@ -140,7 +140,7 @@ void split_and_sort_tables() {
 
 	// set thread attibutes
 	pthread_attr_init(&attr);
-  pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
+  	pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
 
   // allocate space for threads and args
 	threads = (pthread_t*) malloc(sizeof(pthread_t) * numprocs);

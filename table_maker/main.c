@@ -100,7 +100,7 @@ void make_trips() {
 	for (i = 0; i < MAX_TRIPS; i++) {
 		id = get_random_id();
 		get_random_destination(desc);
-		printf("%d %s", id, desc);
+		//printf("%d %s", id, desc);
 		if (fprintf(tripsfile, "%d %s", id, desc) == -1) {
 			printf("Error writing to file.\n");
 			return;
@@ -148,7 +148,7 @@ void make_employees() {
 	for (i = 0; i < MAX_EMPLOYEES; i++) {
 		id = get_random_id();
 		get_random_name(name);
-		printf("%d %s", id, name);
+		//printf("%d %s", id, name);
 		if (fprintf(employeesfile, "%d %s", id, name) == -1) {
 			printf("Error writing to file.\n");
 			return;

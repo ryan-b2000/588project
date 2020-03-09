@@ -9,7 +9,7 @@
 
 #include "datatypes.h"
 
-
+int file_load_input_table(ENTRY ** table, int type);
 
 int file_load_employees_table(ENTRY ** table);
 

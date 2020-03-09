@@ -19,7 +19,8 @@
 #define SIZE_NAME 20
 #define SIZE_DESC SIZE_CITY
 
-
+#define TABLE_TRIPS 			0
+#define TABLE_EMPLOYEES 	1
 
 //======================================================================//
 

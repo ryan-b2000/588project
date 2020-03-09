@@ -1,9 +1,9 @@
 # 588project
 
-Instructions:
-1. Go to the fileio.c file and change the absolute paths to the employees.txt and trips.txt files to your machine specific path.
-2. From top level directoy, compile program with Makefile command: make.
-3. Run program with argument for the number of processors: ./app <num processors>
+Instructions to compile and run:
+1. Compile the project: $ make 
+   Make will create an executable named "app"
+2. Run program with argument for the number of processors: $ ./app <num processors>
 
 Merged Entry Table will be created as merged.txt file.
 

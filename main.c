@@ -45,9 +45,9 @@ int main (int argc, char *argv[]) {
 	numprocs = set_processors(argc, argv);
 
 	// load employee and trips tables
-	if (file_load_employees_table(&employee_table) < 0)
+	if (file_load_input_table(&employee_table, TABLE_EMPLOYEES) < 0)
 		return -1;
-	if (file_load_trips_table(&trips_table) < 0)
+	if (file_load_input_table(&trips_table, TABLE_TRIPS) < 0)
 		return -1;
 
 	// allocate memory for the partition and sub-partition information

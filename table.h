@@ -6,8 +6,7 @@
 #include "datatypes.h"
 
 
-#define TABLE_TRIPS 			0
-#define TABLE_EMPLOYEES 	1
+
 
 //======================================================================//
 

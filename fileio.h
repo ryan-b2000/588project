@@ -1,9 +1,15 @@
+/*		Ryan Bentz, Ignacio Roberto Genovese, Rezwana Mahbub
+ * 		ECE 588 Final Project
+ * 		2020/03/05
+ */
+
+
 #ifndef __FILE_IO__
 #define __FILE_IO__
 
 #include "datatypes.h"
 
-
+int file_load_input_table(ENTRY ** table, int type);
 
 int file_load_employees_table(ENTRY ** table);
 

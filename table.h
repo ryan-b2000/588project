@@ -1,8 +1,12 @@
+/*		Ryan Bentz, Ignacio Roberto Genovese, Rezwana Mahbub
+ * 		ECE 588 Final Project
+ * 		2020/03/05
+ */
+
 #include "datatypes.h"
 
 
-#define TABLE_TRIPS 			0
-#define TABLE_EMPLOYEES 	1
+
 
 //======================================================================//
 

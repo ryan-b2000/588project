@@ -39874,7 +39874,7 @@
        CITIES: Westminster, Hialeah, Denton, Henderson, Akron, Kansas City, Barnstable, Roseville, Sacramento,
  19937 NAMES:  Brantley,
        CITIES: Omaha, Overland Park, Memphis, Oklahoma City,
- 19938 NAMES:  NONE
+ 19938 NAMES:  Cheyney,
        CITIES: Lakeland, Riverside, Richland, Wilmington, Odessa, Las Vegas,
  19939 NAMES:  Cheryl, Boeke,
        CITIES: Alexandria, Joliet, Winter Haven,
@@ -39884,7 +39884,7 @@
        CITIES: Overland Park, Long Beach, Garland, Henderson,
  19942 NAMES:  Bobine,
        CITIES: Bellevue, Bethlehem, Providence, Manchester, Westminster,
- 19943 NAMES:  Arber, Dario,
+ 19943 NAMES:  Arber, Dario, Alidus,
        CITIES: Durham, McAllen,
  19944 NAMES:  Anastos,
        CITIES: New Orleans, Plano, Redding,
@@ -39920,7 +39920,7 @@
        CITIES: Los Angeles, Clarke County, Punta Gorda, Muskegon, Miami, Marysville, Santa Clara, Elkhart, Washington, Bremerton,
  19960 NAMES:  Brookner, Champaigne,
        CITIES: Burbank, St. Paul, Orlando, Rancho Cucamonga,
- 19961 NAMES:  Arnon,
+ 19961 NAMES:  Arnon, Alexandros,
        CITIES: Simi Valley, Miramar, Ontario,
  19962 NAMES:  Bard,
        CITIES: St. Louis, Fresno, Redding, Muskegon,
@@ -39942,14 +39942,14 @@
        CITIES: Trenton, Kailua, Apple Valley, Jacksonville, Norwalk, Syracuse, Wilmington, Fullerton, Jersey City,
  19971 NAMES:  Clarkin,
        CITIES: Vallejo, Saint Louis, Santa Ana, Racine, Abilene,
- 19972 NAMES:  Averi,
+ 19972 NAMES:  Averi, Apostles,
        CITIES: Detroit, Cedar Rapids, Saint Paul, Canton,
  19973 NAMES:  NONE
        CITIES: Lubbock, Savannah, Wilmington,
  19974 NAMES:  Chessa, Alyson,
        CITIES: Bridgeport, Green Bay, Houston, Los Angeles, Orem, Marina,
  19975 NAMES:  NONE
-       CITIES: Melbourne, Bradenton,
+       CITIES: Melbourne, Bradenton, Atlanta,
  19976 NAMES:  NONE
        CITIES: Bakersfield, Alexandria, Scottsdale, Miramar, Port Arthur, San Buenaventura,
  19977 NAMES:  Alsworth,
@@ -39961,7 +39961,7 @@
  19980 NAMES:  Brigid, Bala, Beeck,
        CITIES: Layton,
  19981 NAMES:  Bryan,
-       CITIES: Round Lake Beach, McHenry, Miami, Utica, Austin, Cleveland, Tulsa,
+       CITIES: Round Lake Beach, McHenry, Miami, Utica, Austin, Cleveland, Tulsa, Norwalk,
  19982 NAMES:  Allan,
        CITIES: Irvine, Port Arthur, Albuquerque, Las Cruces, Santa Clara, Boston, Kansas City,
  19983 NAMES:  Brade, Ardell,
@@ -39971,7 +39971,7 @@
  19985 NAMES:  Cordula,
        CITIES: Arvada, Daly City,
  19986 NAMES:  Crotty,
-       CITIES: Hartford, El Monte, Spartanburg, San Diego,
+       CITIES: Hartford, El Monte, Spartanburg, San Diego, Toledo,
  19987 NAMES:  NONE
        CITIES: Cambridge, Sarasota, El Paso, Nashua, St. Petersburg,
  19988 NAMES:  NONE
@@ -39980,21 +39980,21 @@
        CITIES: Tallahassee,
  19990 NAMES:  Darren,
        CITIES: Oakland, Sebastian, Fort Wayne,
- 19991 NAMES:  Colette,
-       CITIES: San Buenaventura, Bloomington, Saginaw,
+ 19991 NAMES:  Colette, Craw,
+       CITIES: San Buenaventura, Bloomington, Saginaw, Aurora, Merced,
  19992 NAMES:  Berman, Allisan,
        CITIES: Raleigh,
  19993 NAMES:  Benyamin, Andie,
-       CITIES: Brownsville, Johnson City, Gilbert, Medford, Augusta, Norfolk,
+       CITIES: Brownsville, Johnson City, Gilbert, Medford, Augusta, Norfolk, Salinas,
  19994 NAMES:  Anthe,
-       CITIES: Charleston,
- 19995 NAMES:  NONE
-       CITIES: NONE
+       CITIES: Charleston, Irvine,
+ 19995 NAMES:  Cilo, Annadiana,
+       CITIES: Tyler, Detroit, Providence, Memphis, Jacksonville, Moreno Valley,
  19996 NAMES:  NONE
-       CITIES: NONE
- 19997 NAMES:  NONE
-       CITIES: NONE
- 19998 NAMES:  NONE
-       CITIES: NONE
+       CITIES: Myrtle Beach, Mobile, Bakersfield, Fort Smith,
+ 19997 NAMES:  Christian, Alcine,
+       CITIES: Tulsa, Warren, Waterbury, Seattle, Memphis,
+ 19998 NAMES:  Davison,
+       CITIES: Spartanburg, Eugene, Tacoma,
  19999 NAMES:  NONE
-       CITIES: NONE
+       CITIES: Kansas City, Harlingen, Garden Grove, Olympia, New London, Monterey, Atlantic City,

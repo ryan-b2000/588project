@@ -1,7 +1,13 @@
+/*		Ryan Bentz, Ignacio Roberto Genovese, Rezwana Mahbub
+ * 		ECE 588 Final Project
+ * 		2020/03/05
+ */
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -12,12 +18,10 @@
 
 //======================================================================//
 #define LEN 100
+#define PATH_SIZE 1000
 
-//#define EMPLOYEE_FILE "/u/ryan27/588/employees.txt"
-//#define TRIPS_FILE "/u/ryan27/588/trips.txt"
-
-#define EMPLOYEE_FILE "/media/ryan/Shared/school/588/project/588project/employees.txt"
-#define TRIPS_FILE "/media/ryan/Shared/school/588/project/588project/trips.txt"
+#define EMPLOYEE_FILE "employees.txt"
+#define TRIPS_FILE "trips.txt"
 
 #define DEBUG 0
 
@@ -194,6 +198,93 @@ void write_partition_to_file(ENTRY * table, int tabletype, int partID) {
 	fclose(file);
 	return;
 }
+
+
+/**************************************************************************************
+ *
+ */
+int file_load_input_table(ENTRY ** table, int type){
+
+	int index = 0;
+	int id = 0;
+	char * token;
+	char * ptr;
+	char str [LEN];
+	char read [LEN];
+	char delimiters[] = " \0";
+	char * filename;
+	char path [PATH_SIZE];
+	int pathlen, filelen;
+	FILE * file;
+
+
+	// get the current path
+	if (getcwd(path, PATH_SIZE) < 0) {
+		printf("Error getting current working directory.\n");
+		return -1;
+	}
+
+	pathlen = strlen(path);
+
+	if (type == TABLE_TRIPS) {
+		// create the absolute path filename
+		filelen = strlen(TRIPS_FILE);
+		filename = (char*) malloc (sizeof(char) * (pathlen + filelen + 1));
+
+		strncpy(filename, path, strlen(path));
+		strncat(filename, "/", 1);
+		strncat(filename, TRIPS_FILE, filelen);
+
+		// allocate memory
+		*table = (ENTRY*) malloc(sizeof(ENTRY) * MAX_TRIPS);
+	}
+	else {
+		// create the absolute path filename
+		filelen = strlen(EMPLOYEE_FILE);
+		filename = (char*) malloc (sizeof(char) * (pathlen + filelen + 1));
+
+		strncpy(filename, path, strlen(path));
+		strncat(filename, "/", 1);
+		strncat(filename, EMPLOYEE_FILE, filelen);
+
+		// allocate memory
+		*table = (ENTRY*) malloc(sizeof(ENTRY) * MAX_EMPLOYEES);
+	}
+
+	printf("Open file: %s\n", filename);
+	file = fopen(filename, "r");
+	if (file == NULL) {
+		perror ("Error occurred");
+		return -1;
+	}
+
+	// read the table from the file
+	index = 0;
+	while (!feof(file)) {
+
+		// read a line
+		fgets(read, LEN, file);
+		// get the items
+		id = atoi(strtok(read, " "));
+		strncpy(str, strtok(NULL, "\n"), SIZE_DESC);
+
+		// add the table entry
+		((*table) + index)->id = id;
+		strncpy(((*table) + index)->desc, str, SIZE_DESC);
+		#if 0
+			printf("Read %d: %d %s\n", index+1, ((*table) + index)->id, ((*table) + index)->desc);
+		#endif
+		index++;
+	}
+
+	memset(filename, '\0', strlen(filename));
+	free(filename);
+
+	fclose(file);
+	printf("Finished loading input table\n");
+	return 0;
+}
+
 
 
 /**************************************************************************************
